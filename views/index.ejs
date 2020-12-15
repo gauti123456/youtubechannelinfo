@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Currency Converter in Javascript</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+      <div class="container">
+          <h1 class="text-center">Youtube Channel Info App</h1>
+          <form id="form">
+              <div class="form-group">
+                  <label for="channelidname">Youtube Channel Name or ID</label>
+                  <input type="text" required placeholder="Enter Channel Name or ID" id="channelnameid" class="form-control">
+              </div>
+              <div class="form-group">
+                  <button id="button" class="btn btn-danger btn-block">
+                      Get Channel Info
+                  </button>
+              </div>
+          </form>
+        <div id="result"></div>
+      </div>
+</body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+      var result
+      $("#form").submit(function(e){
+          e.preventDefault()
+
+          $("#result").empty()
+
+          $("#button").text("Please Wait Fetching Channel Info")
+
+          $("#button").prop("disabled","true")
+
+          var name = $("#channelnameid").val()
+          
+          name = name.trim()
+
+          name = name.split(" ").join("");
+
+          $.ajax({
+              method:"POST",
+              url:"/getchannelinfo",
+              data:{channelname:name},
+              success:function(data){
+                console.log(data)
+
+                $("#button").text("Get Channel Info")
+
+                $("#button").removeAttr("disabled")
+
+                $("#channelnameid").val("")
+
+                result = `
+                
+                <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Channel Name</th>
+        <th>Channel Image</th>
+        <th>Channel URL</th>
+        <th>Subscribers</th>
+        <th>Views</th>
+        <th>Country</th>
+        <th>Genre</th>
+        <th>Video Uploads</th>
+        <th>Estimated Monthly Earnings</th>
+        <th>Estimated Yearly Earnings</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${data.stats.channel_name}</td>
+        <td><img class="img-rounded" src="${data.stats.channel_image}"/></td>
+        <td><a target="_blank" class="btn btn-danger" href="${data.stats.channel_link}">Go to Channel</a></td>
+        <td>${data.stats.channel_subscribers}</td>
+        <td>${data.stats.channel_views}</td>
+        <td>${data.stats.channel_country}</td>
+        <td>${data.stats.channel_genre}</td>
+        <td>${data.stats.channel_uploads}</td>
+        <td>${data.stats.channel_estimated_monthly_earnings}</td>
+        <td>${data.stats.channel_estimated_yearly_earnings}</td>
+      </tr>
+    </tbody>
+  </table>     
+                `
+                $("#result").append(result)
+              }
+
+          })
+
+
+      })
+  </script>
+</html>
